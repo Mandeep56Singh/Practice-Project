@@ -9,6 +9,7 @@ import onlyWarn from "eslint-plugin-only-warn";
  *
  * @type {import("eslint").Linter.Config}
  * */
+// In your existing config array:
 export const config = [
   js.configs.recommended,
   eslintConfigPrettier,
@@ -19,14 +20,23 @@ export const config = [
     },
     rules: {
       "turbo/no-undeclared-env-vars": "warn",
-    },
-  },
-  {
-    plugins: {
-      onlyWarn,
-    },
+      
+      // Core ESLint rules (for JS files)
+      "no-unused-vars": "off", // Disable base rule
+      
+      // TypeScript-specific rules
+      "@typescript-eslint/no-unused-vars": [
+        "error", // Make this an error
+        { 
+          argsIgnorePattern: "^_", 
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_"
+        }
+      ]
+    }
   },
   {
     ignores: ["dist/**"],
   },
 ];
+
