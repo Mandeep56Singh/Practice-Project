@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { createTodoHandler } from "../services/createTodo.service.js";
-import { TodoRequestTypes, TodoResponseTypes } from "../types/todo.types.js";
+import { TodoResponseTypes } from "../types/todo.types.js";
+import { CreatetodoRequestType } from "../zod schema/todo.schema.js";
 
-export const createTodo = async (req: TodoRequestTypes, res: Response) => {
+export const createTodo = async (req: CreatetodoRequestType, res: Response) => {
   try {
     const todo = await createTodoHandler(req.body);
     res.status(201).json(todo);

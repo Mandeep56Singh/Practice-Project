@@ -6,9 +6,4 @@ export type TodoResponseTypes = {
   date: Date; 
 };
 
-export type TodoRequestTypes = {
-  body: {
-    text: string;
-    priority: "LOW" | "MEDIUM" | "HIGH";
-  };
-};
+
