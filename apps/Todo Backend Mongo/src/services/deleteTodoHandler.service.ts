@@ -1,8 +1,8 @@
 import prisma from "../config/prisma.js";
-import { deleteTodoParmamType } from "../validators/todo.schema.js";
+import { todoIdType } from "../validators/todo.schema.js";
 
 export const deleteTodoHandler = async (
-  todoId: deleteTodoParmamType["params"]["id"]
+  todoId: todoIdType["params"]["id"]
 ): Promise<void> => {
   await prisma.todo.delete({
     where: {

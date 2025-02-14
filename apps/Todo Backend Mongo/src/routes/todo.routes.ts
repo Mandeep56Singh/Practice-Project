@@ -2,8 +2,9 @@ import { Router } from "express";
 import { TodoContoller } from "../controller/todo.controller.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import {
-  createTodoSchema,
-  deleteTodoSchema,
+  todoIdSchema,
+  todoSchema,
+  updatePrioritySchema,
 } from "../validators/todo.schema.js";
 
 const router = Router();
@@ -11,14 +12,25 @@ const todoController = new TodoContoller();
 
 router.post(
   "/createTodo",
-  validateRequest(createTodoSchema),
+  validateRequest(todoSchema),
   todoController.createTodo
 );
 
 router.delete(
   "/deleteTodo/:id",
-  validateRequest(deleteTodoSchema),
+  validateRequest(todoIdSchema),
   todoController.deleteTodo
+);
+router.patch(
+  "/toggleCompleteTodo/:id",
+  validateRequest(todoIdSchema),
+  todoController.toggleCompletion
+);
+
+router.patch(
+  "/updateTodoPriority/:id",
+  validateRequest(updatePrioritySchema),
+  todoController.updataPriority
 );
 
 export default router;

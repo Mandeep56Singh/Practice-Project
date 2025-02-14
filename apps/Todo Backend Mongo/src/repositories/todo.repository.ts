@@ -1,14 +1,14 @@
 import prisma from "../config/prisma.js";
 import { TodoResponseTypes } from "../types/todo.types.js";
+import NotFoundError from "../utils/NotFoundError.js";
 import {
-  CreateTodoRequestType,
-  deleteTodoParmamType,
+  todoDataType,
+  todoIdType,
+  UpdatePriorityType,
 } from "../validators/todo.schema.js";
 
 export class TodoRepository {
-  async create(
-    data: CreateTodoRequestType["body"]
-  ): Promise<TodoResponseTypes> {
+  async create(data: todoDataType["body"]): Promise<TodoResponseTypes> {
     return prisma.todo.create({
       data: {
         text: data.text,
@@ -19,12 +19,52 @@ export class TodoRepository {
     });
   }
 
-  async delete(todoId: deleteTodoParmamType["params"]["id"]): Promise<void> {
+  async delete(todoId: todoIdType["params"]["id"]): Promise<void> {
     await prisma.todo.delete({
       where: {
         id: todoId,
       },
     });
   }
-}
+  async updateComplete(todoId: string): Promise<TodoResponseTypes> {
+    const todo = await prisma.todo.findUnique({
+      where: { id: todoId },
+    });
 
+    if (!todo) {
+      throw new NotFoundError("Todo not found");
+    }
+
+    const updatedTodo = await prisma.todo.update({
+      where: {
+        id: todoId,
+      },
+      data: {
+        completed: !todo.completed,
+      },
+    });
+    return updatedTodo;
+  }
+  async updatePriority(
+    todoId: string,
+    priority: UpdatePriorityType["body"]["priority"]
+  ): Promise<TodoResponseTypes> {
+    const todo = await prisma.todo.findUnique({
+      where: {
+        id: todoId,
+      },
+    });
+    if (!todo) {
+      throw new NotFoundError("Todo Not Found");
+    }
+    const updatedTodo = await prisma.todo.update({
+      where: {
+        id: todoId,
+      },
+      data: {
+        priority: priority,
+      },
+    });
+    return updatedTodo;
+  }
+}

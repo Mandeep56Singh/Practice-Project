@@ -1,16 +1,19 @@
 import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 import { TodoService } from "../services/todo.service.js";
+import { TodoResponseTypes } from "../types/todo.types.js";
+import NotFoundError from "../utils/NotFoundError.js";
 import {
-  CreateTodoRequestType,
-  deleteTodoParmamType,
+  todoDataType,
+  todoIdType,
+  UpdatePriorityType,
 } from "../validators/todo.schema.js";
 
 export class TodoContoller {
   private todoService = new TodoService();
 
   createTodo = async (
-    req: Request<{}, {}, CreateTodoRequestType["body"]>,
+    req: Request<{}, {}, todoDataType["body"]>,
     res: Response
   ): Promise<void> => {
     try {
@@ -22,7 +25,7 @@ export class TodoContoller {
     }
   };
   deleteTodo = async (
-    req: Request<deleteTodoParmamType["params"]>,
+    req: Request<todoIdType["params"]>,
     res: Response
   ): Promise<void> => {
     try {
@@ -39,6 +42,41 @@ export class TodoContoller {
       } else {
         // General server error
         res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+  };
+
+  toggleCompletion = async (
+    req: Request<todoIdType["params"], TodoResponseTypes>,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const updatedTodo = await this.todoService.toggleCompletionTodo(id);
+      res.status(200).json(updatedTodo);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(404).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+  };
+  updataPriority = async (
+    req: Request<
+      UpdatePriorityType["params"],
+      TodoResponseTypes,
+      UpdatePriorityType["body"]
+    >,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const { priority } = req.body;
+      const todo = await this.todoService.updateTodoPriority(id, priority);
+      res.status(200).json(todo);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
       }
     }
   };
