@@ -1,9 +1,9 @@
 import prisma from "../config/prisma.js";
 import { TodoResponseTypes } from "../types/todo.types.js";
-import { CreatetodoRequestType } from "../zod schema/todo.schema.js";
+import { CreateTodoRequestType } from "../validators/todo.schema.js";
 
 export const createTodoHandler = async (
-  todoData: CreatetodoRequestType["body"]
+  todoData: CreateTodoRequestType["body"]
 ): Promise<TodoResponseTypes> => {
   try {
     return await prisma.todo.create({
