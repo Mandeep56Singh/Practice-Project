@@ -5,6 +5,7 @@ import {
   todoIdSchema,
   todoSchema,
   updatePrioritySchema,
+  updateTodoSchema,
 } from "../validators/todo.schema.js";
 
 const router = Router();
@@ -31,6 +32,11 @@ router.patch(
   "/updateTodoPriority/:id",
   validateRequest(updatePrioritySchema),
   todoController.updataPriority
+);
+router.patch(
+  "/updateTodo/:id",
+  validateRequest(updateTodoSchema),
+  todoController.updateTodo
 );
 router.get(
   "/getTodo/:id",

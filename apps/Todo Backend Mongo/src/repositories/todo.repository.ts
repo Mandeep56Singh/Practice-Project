@@ -45,6 +45,31 @@ export class TodoRepository {
     });
     return updatedTodo;
   }
+  async updateTodo(
+    todoId: string,
+    data: Partial<todoDataType["body"]>
+  ): Promise<TodoResponse> {
+    const id = todoId;
+    const todo = await prisma.todo.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!todo) {
+      throw new NotFoundError("Todo Not Found");
+    }
+    const updatedTodo = await prisma.todo.update({
+      where: {
+        id: todoId,
+      },
+      data: {
+        ...data,
+        date: new Date(),
+      },
+    });
+
+    return updatedTodo;
+  }
   async updatePriority(
     todoId: string,
     priority: UpdatePriorityType["body"]["priority"]

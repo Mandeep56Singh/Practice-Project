@@ -80,7 +80,22 @@ export class TodoContoller {
       }
     }
   };
-
+  updateTodo = async (
+    req: Request<todoIdType["params"], {}, Partial<todoDataType["body"]>>,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const data = req.body;
+      const { id } = req.params;
+      const updatedTodo = await this.todoService.updateTodo(id, data);
+      res.status(200).json(updatedTodo);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(404).json({ error: error.message });
+      }
+      res.status(500).send("Internal server error");
+    }
+  };
   getAllTodo = async (_: Request, res: Response): Promise<void> => {
     try {
       const allTodos = await this.todoService.getAllTodos();

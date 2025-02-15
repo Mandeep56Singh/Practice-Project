@@ -25,7 +25,13 @@ export class TodoService {
     );
     return updatedTodo;
   }
-
+  async updateTodo(
+    todoId: string,
+    data: Partial<todoDataType["body"]>
+  ): Promise<TodoResponse> {
+    const updatedTodo = await this.todoRepository.updateTodo(todoId, data);
+    return updatedTodo;
+  }
   async getAllTodos(): Promise<TodoResponse[]> {
     const allTodos = await this.todoRepository.getAllTodos();
     return allTodos;
