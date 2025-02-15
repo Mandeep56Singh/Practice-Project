@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 import { TodoResponse } from "../dtos/todo.types.js";
+import ApiError from "../utils/apiError.js";
 import NotFoundError from "../utils/NotFoundError.js";
 import {
   todoDataType,
@@ -32,7 +33,7 @@ export class TodoRepository {
     });
 
     if (!todo) {
-      throw new NotFoundError("Todo not found");
+      throw new ApiError(404, "Todo Not Found");
     }
 
     const updatedTodo = await prisma.todo.update({
@@ -56,7 +57,7 @@ export class TodoRepository {
       },
     });
     if (!todo) {
-      throw new NotFoundError("Todo Not Found");
+      throw new ApiError(404, "Todo Not Found");
     }
     const updatedTodo = await prisma.todo.update({
       where: {
@@ -80,7 +81,7 @@ export class TodoRepository {
       },
     });
     if (!todo) {
-      throw new NotFoundError("Todo Not Found");
+      throw new ApiError(404, "Todo Not Found");
     }
     const updatedTodo = await prisma.todo.update({
       where: {
@@ -106,7 +107,7 @@ export class TodoRepository {
     });
 
     if (!todo) {
-      throw new NotFoundError("Todo Not Found");
+      throw new ApiError(404, "Todo Not Found");
     }
     return todo;
   }
