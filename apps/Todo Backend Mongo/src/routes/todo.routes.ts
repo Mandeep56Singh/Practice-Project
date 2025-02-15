@@ -32,5 +32,10 @@ router.patch(
   validateRequest(updatePrioritySchema),
   todoController.updataPriority
 );
-
+router.get(
+  "/getTodo/:id",
+  validateRequest(todoIdSchema),
+  todoController.getTodo
+);
+router.get("/getAllTodos", todoController.getAllTodo);
 export default router;

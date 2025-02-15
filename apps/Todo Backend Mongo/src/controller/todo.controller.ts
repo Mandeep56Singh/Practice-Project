@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
+import { TodoResponse } from "../dtos/todo.types.js";
 import { TodoService } from "../services/todo.service.js";
-import { TodoResponseTypes } from "../types/todo.types.js";
 import NotFoundError from "../utils/NotFoundError.js";
 import {
   todoDataType,
@@ -47,7 +47,7 @@ export class TodoContoller {
   };
 
   toggleCompletion = async (
-    req: Request<todoIdType["params"], TodoResponseTypes>,
+    req: Request<todoIdType["params"], TodoResponse>,
     res: Response
   ): Promise<void> => {
     try {
@@ -65,7 +65,7 @@ export class TodoContoller {
   updataPriority = async (
     req: Request<
       UpdatePriorityType["params"],
-      TodoResponseTypes,
+      TodoResponse,
       UpdatePriorityType["body"]
     >,
     res: Response
@@ -77,6 +77,33 @@ export class TodoContoller {
       res.status(200).json(todo);
     } catch (error) {
       if (error instanceof NotFoundError) {
+      }
+    }
+  };
+
+  getAllTodo = async (_: Request, res: Response): Promise<void> => {
+    try {
+      const allTodos = await this.todoService.getAllTodos();
+      res.status(200).json(allTodos);
+    } catch (error) {
+      console.error("Error fetching all todos:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  };
+  getTodo = async (
+    req: Request<todoIdType["params"]>,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const todo = await this.todoService.getTodo(id);
+      res.status(200).send(todo);
+    } catch (error) {
+      console.error("Error fetching todo");
+      if (error instanceof NotFoundError) {
+        res.status(404).send({ error: error.message });
+      } else {
+        res.status(500).send("Internal Server Error");
       }
     }
   };
