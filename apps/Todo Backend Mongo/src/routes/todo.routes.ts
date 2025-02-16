@@ -2,6 +2,7 @@ import { Router } from "express";
 import { TodoContoller } from "../controller/todo.controller.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import {
+  todoFilterSchema,
   todoIdSchema,
   todoSchema,
   updateTodoSchema,
@@ -24,7 +25,7 @@ router.delete(
 router.patch(
   "/toggleCompleteTodo/:id",
   validateRequest(todoIdSchema),
-  todoController.toggleCompletion
+  todoController.togglecompleted
 );
 
 router.patch(
@@ -38,4 +39,10 @@ router.get(
   todoController.getTodo
 );
 router.get("/getAllTodos", todoController.getAllTodo);
+
+router.get(
+  "/todoFilter",
+  validateRequest(todoFilterSchema),
+  todoController.todoFilter
+);
 export default router;

@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { TodoResponse } from "../dtos/todo.types.js";
 import { TodoService } from "../services/todo.service.js";
-import { todoDataType, todoIdType } from "../validators/todo.schema.js";
+import {
+  todoDataType,
+  TodoFilterType,
+  todoIdType,
+} from "../validators/todo.schema.js";
 
 export class TodoContoller {
   private todoService = new TodoService();
@@ -28,14 +32,14 @@ export class TodoContoller {
     res.status(204).send();
   };
 
-  toggleCompletion = async (
+  togglecompleted = async (
     req: Request<todoIdType["params"], TodoResponse>,
     res: Response
   ): Promise<void> => {
     const { id } = req.params;
-    req.log.debug(`Toggling completion of todo with id: ${id}`);
-    const updatedTodo = await this.todoService.toggleCompletionTodo(id);
-    req.log.info({ todoId: id }, "Todo completion toggled");
+    req.log.debug(`Toggling completed of todo with id: ${id}`);
+    const updatedTodo = await this.todoService.togglecompletedTodo(id);
+    req.log.info({ todoId: id }, "Todo completed toggled");
     res.status(200).json(updatedTodo);
   };
 
@@ -47,7 +51,7 @@ export class TodoContoller {
     const { id } = req.params;
     req.log.debug({ todoId: id, data: data }, "Updating Todo");
     const updatedTodo = await this.todoService.updateTodo(id, data);
-    req.log.info({ todoId: id }, "Todo completion toggled");
+    req.log.info({ todoId: id }, "Todo completed toggled");
     res.status(200).json(updatedTodo);
   };
 
@@ -57,7 +61,7 @@ export class TodoContoller {
     req.log.info(`All Todos Retrieved`);
     res.status(200).json(allTodos);
   };
-  
+
   getTodo = async (
     req: Request<todoIdType["params"]>,
     res: Response
@@ -67,5 +71,18 @@ export class TodoContoller {
     const todo = await this.todoService.getTodo(id);
     req.log.info(`Retrieved Todo with ID: ${id}`);
     res.status(200).send(todo);
+  };
+
+  todoFilter = async (
+    req: Request<{}, {}, {}, TodoFilterType["query"]>,
+    res: Response
+  ): Promise<void> => {
+    const filters = req.query;
+    req.log.debug("Applying requested filters, filters: ",filters );
+
+    const filteredTodos: TodoResponse[] =
+      await this.todoService.todoFilter(filters);
+    req.log.info("Todos with requested filters Retrieved");
+    res.status(200).json(filteredTodos);
   };
 }

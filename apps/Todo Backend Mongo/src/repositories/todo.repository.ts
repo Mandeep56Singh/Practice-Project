@@ -1,7 +1,11 @@
 import prisma from "../config/prisma.js";
 import { TodoResponse } from "../dtos/todo.types.js";
 import ApiError from "../utils/apiError.js";
-import { todoDataType, todoIdType } from "../validators/todo.schema.js";
+import {
+  todoDataType,
+  TodoFilterType,
+  todoIdType,
+} from "../validators/todo.schema.js";
 
 export class TodoRepository {
   async create(data: todoDataType["body"]): Promise<TodoResponse> {
@@ -83,5 +87,29 @@ export class TodoRepository {
       throw new ApiError(404, "Todo Not Found");
     }
     return todo;
+  }
+  async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
+    const { completed, endDate, priority, startDate } = filters;
+   
+    const where: any = {
+      completed,
+      priority,
+      date:
+        startDate || endDate
+          ? {
+              ...(startDate && { gte: new Date(startDate) }),
+              ...(endDate && { lte: new Date(endDate) }),
+            }
+          : undefined,
+    };
+    // Remove undefined values to help debugging
+    Object.keys(where).forEach(
+      (key) => where[key] === undefined && delete where[key]
+    );
+    const filteredTodos = await prisma.todo.findMany({
+      where,
+    });
+
+    return filteredTodos;
   }
 }

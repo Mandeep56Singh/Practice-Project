@@ -5,12 +5,12 @@ export const validateRequest =
   (schema: AnyZodObject) =>
   (req: Request, res: Response, next: NextFunction): void => {
     try {
-      schema.parse({
+     const parsedData =  schema.parse({
         body: req.body,
         query: req.query,
         params: req.params,
       });
-
+      req.query = parsedData.query
       req.log.info(
         {
           requestId: req.headers["x-request-id"],

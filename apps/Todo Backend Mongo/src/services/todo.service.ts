@@ -1,6 +1,6 @@
 import { TodoResponse } from "../dtos/todo.types.js";
 import { TodoRepository } from "../repositories/todo.repository.js";
-import { todoDataType } from "../validators/todo.schema.js";
+import { todoDataType, TodoFilterType } from "../validators/todo.schema.js";
 
 export class TodoService {
   private todoRepository = new TodoRepository();
@@ -11,7 +11,7 @@ export class TodoService {
   async deleteTodo(todoId: string): Promise<void> {
     await this.todoRepository.delete(todoId);
   }
-  async toggleCompletionTodo(todoId: string): Promise<TodoResponse> {
+  async togglecompletedTodo(todoId: string): Promise<TodoResponse> {
     const updatedTodo = await this.todoRepository.updateComplete(todoId);
     return updatedTodo;
   }
@@ -30,5 +30,10 @@ export class TodoService {
   async getTodo(id: string): Promise<TodoResponse> {
     const todo = await this.todoRepository.getTodo(id);
     return todo;
+  }
+
+  async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
+    const filteredTodos = await this.todoRepository.todoFilter(filters);
+    return filteredTodos;
   }
 }
