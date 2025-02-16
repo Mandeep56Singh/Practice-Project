@@ -13,14 +13,7 @@ export const todoIdSchema = z.object({
     }),
   }),
 });
-export const updatePrioritySchema = z.object({
-  params: z.object({
-    id: z.string(),
-  }),
-  body: z.object({
-    priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
-  }),
-});
+
 export const updateTodoSchema = z.object({
   params: z.object({
     id: z.string(),
@@ -38,7 +31,6 @@ export const updateTodoSchema = z.object({
     }),
 });
 
-export type UpdatePriorityType = z.infer<typeof updatePrioritySchema>;
 export type UpdateTodoType = z.infer<typeof updateTodoSchema>;
 export type todoDataType = z.infer<typeof todoSchema>;
 export type todoIdType = z.infer<typeof todoIdSchema>;

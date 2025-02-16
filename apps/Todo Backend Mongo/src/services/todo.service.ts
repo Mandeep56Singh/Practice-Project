@@ -1,6 +1,6 @@
 import { TodoResponse } from "../dtos/todo.types.js";
 import { TodoRepository } from "../repositories/todo.repository.js";
-import { todoDataType, UpdatePriorityType } from "../validators/todo.schema.js";
+import { todoDataType } from "../validators/todo.schema.js";
 
 export class TodoService {
   private todoRepository = new TodoRepository();
@@ -15,16 +15,7 @@ export class TodoService {
     const updatedTodo = await this.todoRepository.updateComplete(todoId);
     return updatedTodo;
   }
-  async updateTodoPriority(
-    todoId: string,
-    priority: UpdatePriorityType["body"]["priority"]
-  ): Promise<TodoResponse> {
-    const updatedTodo = await this.todoRepository.updatePriority(
-      todoId,
-      priority
-    );
-    return updatedTodo;
-  }
+
   async updateTodo(
     todoId: string,
     data: Partial<todoDataType["body"]>

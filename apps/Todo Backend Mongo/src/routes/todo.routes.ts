@@ -4,7 +4,6 @@ import { validateRequest } from "../middleware/validateRequest.js";
 import {
   todoIdSchema,
   todoSchema,
-  updatePrioritySchema,
   updateTodoSchema,
 } from "../validators/todo.schema.js";
 
@@ -28,11 +27,6 @@ router.patch(
   todoController.toggleCompletion
 );
 
-router.patch(
-  "/updateTodoPriority/:id",
-  validateRequest(updatePrioritySchema),
-  todoController.updataPriority
-);
 router.patch(
   "/updateTodo/:id",
   validateRequest(updateTodoSchema),

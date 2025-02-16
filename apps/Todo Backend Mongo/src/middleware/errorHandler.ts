@@ -45,12 +45,14 @@ export const errorHandler = (
     message = err.message;
   }
 
-  // Log error stack in development
-  if (process.env.NODE_ENV === "development") {
-    console.error(err.stack);
-  }
+  // Log using the request logger
+  req.log.error({
+    err,
+    statusCode,
+    url: req.originalUrl,
+    method: req.method,
+  }, message);
 
-  // Send error response
   res.status(statusCode).json({
     success: false,
     message,
