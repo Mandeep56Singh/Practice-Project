@@ -49,6 +49,15 @@ export const todoFilterSchema = z.object({
     priority: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
   }),
 });
+
+export const todoSortingSchema = z.object({
+  query: z.object({
+    sortBy: z.enum(["date", "priority"]),
+    sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  }),
+});
+
+export type TodoSortingType = z.infer<typeof todoSortingSchema>;
 export type TodoFilterType = z.infer<typeof todoFilterSchema>;
 export type UpdateTodoType = z.infer<typeof updateTodoSchema>;
 export type todoDataType = z.infer<typeof todoSchema>;

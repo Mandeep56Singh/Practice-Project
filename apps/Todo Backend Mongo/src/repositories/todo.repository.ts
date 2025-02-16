@@ -5,6 +5,7 @@ import {
   todoDataType,
   TodoFilterType,
   todoIdType,
+  TodoSortingType,
 } from "../validators/todo.schema.js";
 
 export class TodoRepository {
@@ -90,7 +91,7 @@ export class TodoRepository {
   }
   async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
     const { completed, endDate, priority, startDate } = filters;
-   
+
     const where: any = {
       completed,
       priority,
@@ -111,5 +112,37 @@ export class TodoRepository {
     });
 
     return filteredTodos;
+  }
+
+  async todoSorting(
+    sorting: TodoSortingType["query"]
+  ): Promise<TodoResponse[]> {
+    const { sortBy, sortOrder } = sorting;
+
+    // Special handling for priority sorting
+    if (sortBy === "priority") {
+      const priorityOrder = {
+        LOW: 1,
+        MEDIUM: 2,
+        HIGH: 3,
+      };
+
+      const sortedTodos = await prisma.todo.findMany();
+
+      sortedTodos.sort((a, b) => {
+        return sortOrder === "asc"
+          ? priorityOrder[a.priority] - priorityOrder[b.priority] // LOW → MEDIUM → HIGH
+          : priorityOrder[b.priority] - priorityOrder[a.priority]; // HIGH → MEDIUM → LOW
+      });
+
+      return sortedTodos;
+    }
+
+    // Default Prisma sorting for other fields
+    const sortedTodos = await prisma.todo.findMany({
+      orderBy: sortBy ? { [sortBy]: sortOrder } : undefined,
+    });
+
+    return sortedTodos;
   }
 }

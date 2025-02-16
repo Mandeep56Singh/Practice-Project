@@ -5,6 +5,7 @@ import {
   todoDataType,
   TodoFilterType,
   todoIdType,
+  TodoSortingType,
 } from "../validators/todo.schema.js";
 
 export class TodoContoller {
@@ -78,11 +79,22 @@ export class TodoContoller {
     res: Response
   ): Promise<void> => {
     const filters = req.query;
-    req.log.debug("Applying requested filters, filters: ",filters );
+    req.log.debug("Applying requested filters, filters: ", filters);
 
     const filteredTodos: TodoResponse[] =
       await this.todoService.todoFilter(filters);
     req.log.info("Todos with requested filters Retrieved");
     res.status(200).json(filteredTodos);
+  };
+
+  todoSorting = async (
+    req: Request<{}, {}, {}, TodoSortingType["query"]>,
+    res: Response
+  ): Promise<void> => {
+    const sorting = req.query;
+    req.log.debug("Sorting todo...");
+    const sortedTodos = await this.todoService.todoSorting(sorting);
+    req.log.info("Todos with requested sorting Retrieved");
+    res.status(200).json(sortedTodos);
   };
 }

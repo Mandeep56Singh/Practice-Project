@@ -1,6 +1,10 @@
 import { TodoResponse } from "../dtos/todo.types.js";
 import { TodoRepository } from "../repositories/todo.repository.js";
-import { todoDataType, TodoFilterType } from "../validators/todo.schema.js";
+import {
+  todoDataType,
+  TodoFilterType,
+  TodoSortingType,
+} from "../validators/todo.schema.js";
 
 export class TodoService {
   private todoRepository = new TodoRepository();
@@ -35,5 +39,12 @@ export class TodoService {
   async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
     const filteredTodos = await this.todoRepository.todoFilter(filters);
     return filteredTodos;
+  }
+
+  async todoSorting(
+    sorting: TodoSortingType["query"]
+  ): Promise<TodoResponse[]> {
+    const sortedTodos = await this.todoRepository.todoSorting(sorting);
+    return sortedTodos;
   }
 }

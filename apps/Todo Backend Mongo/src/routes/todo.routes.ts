@@ -5,6 +5,7 @@ import {
   todoFilterSchema,
   todoIdSchema,
   todoSchema,
+  todoSortingSchema,
   updateTodoSchema,
 } from "../validators/todo.schema.js";
 
@@ -44,5 +45,11 @@ router.get(
   "/todoFilter",
   validateRequest(todoFilterSchema),
   todoController.todoFilter
+);
+
+router.get(
+  "/todoSorting",
+  validateRequest(todoSortingSchema),
+  todoController.todoSorting
 );
 export default router;
