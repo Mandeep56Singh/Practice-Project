@@ -5,10 +5,9 @@ import "express-async-errors";
 import { errorHandler } from "./middleware/errorHandler.js";
 import httpLogger from "./middleware/httpLogger.js";
 import { routeNotFound } from "./middleware/routeNotFound.js";
+import healthRouter from "./routes/health.routes.js";
 import todoRouter from "./routes/todo.routes.js";
-import { healthCheck } from "./utils/heathCheck.js";
 import logger from "./utils/logger.js";
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -23,7 +22,7 @@ app.get("/", (_: Request, res: Response) => {
 });
 
 // Routes
-app.get("/health", healthCheck);
+app.use("/health", healthRouter);
 app.use("/api/todo", todoRouter);
 
 // Error handling
