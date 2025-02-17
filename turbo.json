@@ -1,9 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "pipeline": {
+  "tasks": {
     "build": {
-      "outputs": ["apps/Todo Backend Mongo/dist/**"],
+      "outputs": ["apps/Todo-Backend-Mongo/dist/**"],
       "dependsOn": ["^build"]
     },
     "dev": {
