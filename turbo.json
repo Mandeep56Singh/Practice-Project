@@ -3,7 +3,7 @@
   "ui": "tui",
   "tasks": {
     "build": {
-      "outputs": ["apps/Todo-Backend-Mongo/dist/**"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "dependsOn": ["^build"]
     },
     "dev": {
