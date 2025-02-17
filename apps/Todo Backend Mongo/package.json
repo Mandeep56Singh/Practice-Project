@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch ./src/index.ts"
+    "dev": "tsx watch ./src/index.ts",
+    "start": "NODE_ENV=production node --no-warnings=ExperimentalWarning --loader tsx ./src/index.ts",
+    "prod": "pnpm start"
   },
   "type": "module",
   "keywords": [],
