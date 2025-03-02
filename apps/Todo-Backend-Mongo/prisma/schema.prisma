@@ -7,15 +7,41 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
 enum Priority {
   LOW
   MEDIUM
   HIGH
 }
+
+model User {
+    id String @id @default(auto()) @map("_id") @db.ObjectId
+    email String @unique
+    password String
+    username String  
+    createdAt DateTime @default(now())    
+    updatedAt DateTime @updatedAt 
+    tokens Tokens[]
+    todos Todo[]
+}
+
 model Todo {
   id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
   text String
   completed Boolean
   priority Priority @default(LOW)
   date DateTime
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Tokens {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  tokenHash String @unique
+  userId String @db.ObjectId
+  valid Boolean @default(true)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  usedAt DateTime? 
+  user User @relation(fields: [userId], references: [id])
 }

@@ -1,50 +1,62 @@
-import { TodoResponse } from "../dtos/todo.types.js";
+import { TodoDataType, TodoResponse } from "../dtos/todo.types.js";
 import { TodoRepository } from "../repositories/todo.repository.js";
-import {
-  todoDataType,
-  TodoFilterType,
-  TodoSortingType,
-} from "../validators/todo.schema.js";
+import ApiError from "../utils/apiError.js";
+import { createTodoDataType } from "../validators/todo.schema.js";
 
 export class TodoService {
   private todoRepository = new TodoRepository();
-  async createTodo(todoData: todoDataType["body"]): Promise<TodoResponse> {
+  async createTodo(todoData: TodoDataType): Promise<TodoResponse> {
     return await this.todoRepository.create(todoData);
   }
 
-  async deleteTodo(todoId: string): Promise<void> {
-    await this.todoRepository.delete(todoId);
+  async deleteTodo(todoId: string, userId: string): Promise<void> {
+    const todo = this.todoRepository.findTodo(userId, todoId);
+    if (!todo) {
+      throw new ApiError(404, "Todo Not Found");
+    }
+
+    await this.todoRepository.deleteByUser(todoId, userId);
   }
-  async togglecompletedTodo(todoId: string): Promise<TodoResponse> {
-    const updatedTodo = await this.todoRepository.updateComplete(todoId);
+  async togglecompletedTodo(
+    todoId: string,
+    userId: string
+  ): Promise<TodoResponse> {
+    const todo = await this.todoRepository.findTodo(userId, todoId);
+    if (!todo) {
+      throw new ApiError(404, "Todo Not Found");
+    }
+
+    const updatedTodo = await this.todoRepository.updateComplete(
+      todoId,
+      userId,
+      todo.completed
+    );
     return updatedTodo;
   }
 
   async updateTodo(
     todoId: string,
-    data: Partial<todoDataType["body"]>
+    userId: string,
+    data: Partial<createTodoDataType["body"]>
   ): Promise<TodoResponse> {
-    const updatedTodo = await this.todoRepository.updateTodo(todoId, data);
+    const todo = await this.todoRepository.findTodo(userId, todoId);
+    if (!todo) {
+      throw new ApiError(404, "Todo Not Found");
+    }
+
+    const updatedTodo = await this.todoRepository.updateTodo(
+      todoId,
+      userId,
+      data
+    );
     return updatedTodo;
   }
-  async getAllTodos(): Promise<TodoResponse[]> {
-    const allTodos = await this.todoRepository.getAllTodos();
+  async getTodoByUser(userId: string): Promise<TodoResponse[]> {
+    const allTodos = await this.todoRepository.findByUser(userId);
     return allTodos;
   }
-  async getTodo(id: string): Promise<TodoResponse> {
-    const todo = await this.todoRepository.getTodo(id);
+  async getTodo(id: string, userId: string): Promise<TodoResponse | null> {
+    const todo = await this.todoRepository.findTodo(id, userId);
     return todo;
-  }
-
-  async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
-    const filteredTodos = await this.todoRepository.todoFilter(filters);
-    return filteredTodos;
-  }
-
-  async todoSorting(
-    sorting: TodoSortingType["query"]
-  ): Promise<TodoResponse[]> {
-    const sortedTodos = await this.todoRepository.todoSorting(sorting);
-    return sortedTodos;
   }
 }

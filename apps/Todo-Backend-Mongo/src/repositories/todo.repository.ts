@@ -1,17 +1,15 @@
 import prisma from "../config/prisma.js";
-import { TodoResponse } from "../dtos/todo.types.js";
-import ApiError from "../utils/apiError.js";
+import { TodoDataType, TodoResponse } from "../dtos/todo.types.js";
 import {
-  todoDataType,
-  TodoFilterType,
+  createTodoDataType,
   todoIdType,
-  TodoSortingType,
 } from "../validators/todo.schema.js";
 
 export class TodoRepository {
-  async create(data: todoDataType["body"]): Promise<TodoResponse> {
+  async create(data: TodoDataType): Promise<TodoResponse> {
     return prisma.todo.create({
       data: {
+        userId: data.userId,
         text: data.text,
         completed: false,
         priority: data.priority || "LOW",
@@ -19,49 +17,54 @@ export class TodoRepository {
       },
     });
   }
+  async findTodo(userId: string, todoId: string): Promise<TodoResponse | null > {
+    const todo = await prisma.todo.findUnique({
+      where: { id: todoId, userId },
+    });
+    return todo;
+  }
+  async findByUser(userId: string): Promise<TodoResponse[]> {
+    const allTodos = await prisma.todo.findMany({
+      where: {
+        userId,
+      },
+    });
+    return allTodos;
+  }
 
-  async delete(todoId: todoIdType["params"]["id"]): Promise<void> {
+  async deleteByUser(
+    todoId: todoIdType["params"]["id"],
+    userId: string
+  ): Promise<void> {
     await prisma.todo.delete({
       where: {
         id: todoId,
+        userId,
       },
     });
   }
-  async updateComplete(todoId: string): Promise<TodoResponse> {
-    const todo = await prisma.todo.findUnique({
-      where: { id: todoId },
-    });
-
-    if (!todo) {
-      throw new ApiError(404, "Todo Not Found");
-    }
-
+  async updateComplete(
+    todoId: string,
+    userId: string,
+    toggleVal: boolean
+  ): Promise<TodoResponse> {
     const updatedTodo = await prisma.todo.update({
       where: {
         id: todoId,
+        userId,
       },
       data: {
-        completed: !todo.completed,
+        completed: !toggleVal,
       },
     });
     return updatedTodo;
   }
-  async updateTodo(
-    todoId: string,
-    data: Partial<todoDataType["body"]>
-  ): Promise<TodoResponse> {
-    const id = todoId;
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: id,
-      },
-    });
-    if (!todo) {
-      throw new ApiError(404, "Todo Not Found");
-    }
+  async updateTodo(todoId: string, userId: string, data: Partial<createTodoDataType["body"]>): Promise<TodoResponse> {
+    
     const updatedTodo = await prisma.todo.update({
       where: {
         id: todoId,
+        userId: userId,
       },
       data: {
         ...data,
@@ -72,77 +75,5 @@ export class TodoRepository {
     return updatedTodo;
   }
 
-  async getAllTodos(): Promise<TodoResponse[]> {
-    const allTodos = await prisma.todo.findMany();
-    return allTodos;
-  }
-
-  async getTodo(todoId: string): Promise<TodoResponse> {
-    const todo = await prisma.todo.findUnique({
-      where: {
-        id: todoId,
-      },
-    });
-
-    if (!todo) {
-      throw new ApiError(404, "Todo Not Found");
-    }
-    return todo;
-  }
-  async todoFilter(filters: TodoFilterType["query"]): Promise<TodoResponse[]> {
-    const { completed, endDate, priority, startDate } = filters;
-
-    const where: any = {
-      completed,
-      priority,
-      date:
-        startDate || endDate
-          ? {
-              ...(startDate && { gte: new Date(startDate) }),
-              ...(endDate && { lte: new Date(endDate) }),
-            }
-          : undefined,
-    };
-    // Remove undefined values to help debugging
-    Object.keys(where).forEach(
-      (key) => where[key] === undefined && delete where[key]
-    );
-    const filteredTodos = await prisma.todo.findMany({
-      where,
-    });
-
-    return filteredTodos;
-  }
-
-  async todoSorting(
-    sorting: TodoSortingType["query"]
-  ): Promise<TodoResponse[]> {
-    const { sortBy, sortOrder } = sorting;
-
-    // Special handling for priority sorting
-    if (sortBy === "priority") {
-      const priorityOrder = {
-        LOW: 1,
-        MEDIUM: 2,
-        HIGH: 3,
-      };
-
-      const sortedTodos = await prisma.todo.findMany();
-
-      sortedTodos.sort((a, b) => {
-        return sortOrder === "asc"
-          ? priorityOrder[a.priority] - priorityOrder[b.priority] // LOW → MEDIUM → HIGH
-          : priorityOrder[b.priority] - priorityOrder[a.priority]; // HIGH → MEDIUM → LOW
-      });
-
-      return sortedTodos;
-    }
-
-    // Default Prisma sorting for other fields
-    const sortedTodos = await prisma.todo.findMany({
-      orderBy: sortBy ? { [sortBy]: sortOrder } : undefined,
-    });
-
-    return sortedTodos;
-  }
+ 
 }

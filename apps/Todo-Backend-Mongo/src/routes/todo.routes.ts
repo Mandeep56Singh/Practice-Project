@@ -2,16 +2,13 @@ import { Router } from "express";
 import { TodoContoller } from "../controller/todo.controller.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import {
-  todoFilterSchema,
   todoIdSchema,
   todoSchema,
-  todoSortingSchema,
   updateTodoSchema,
 } from "../validators/todo.schema.js";
 
 const router = Router();
 const todoController = new TodoContoller();
-
 router.post(
   "/createTodo",
   validateRequest(todoSchema),
@@ -41,15 +38,4 @@ router.get(
 );
 router.get("/getAllTodos", todoController.getAllTodo);
 
-router.get(
-  "/todoFilter",
-  validateRequest(todoFilterSchema),
-  todoController.todoFilter
-);
-
-router.get(
-  "/todoSorting",
-  validateRequest(todoSortingSchema),
-  todoController.todoSorting
-);
 export default router;
