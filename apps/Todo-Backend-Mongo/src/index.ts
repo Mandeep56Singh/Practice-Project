@@ -1,5 +1,5 @@
 import cookieParser from "cookie-parser";
-import cors from "cors"; // <-- Enable CORS
+import cors from "cors"; 
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import "express-async-errors";
@@ -16,14 +16,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 import agenda from "./jobs/agenda.js";
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",")
+
 // Middlewares
-app.use(cors()); // Allow cross-origin requests
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., mobile apps or curl)
+      if (!origin) return callback(null, true);
+      // Check if the request origin is in the allowed list
+      if (allowedOrigins?.includes(origin)) {
+        callback(null, origin); // Reflect the request origin
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow credentials (cookies, auth headers)
+  })
+);
 app.use(express.json());
 app.use(httpLogger);
 app.use(cookieParser());
 
 
-// Optional: Add a root route to avoid 404 errors on '/'
 app.get("/", (_: Request, res: Response) => {
   res.status(200).send("Server is running");
 });
