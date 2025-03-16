@@ -33,7 +33,7 @@ export class UserController {
 
     setAuthCookies(res, accessToken, refreshToken);
 
-    res.send({ accessToken, refreshToken });
+    res.status(200).json({ message: "Token generated successfully" });
   };
 
   logout = async (req: Request, res: Response): Promise<void> => {

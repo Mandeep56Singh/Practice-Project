@@ -11,20 +11,22 @@ function setAuthCookies(
   accessToken: string,
   refreshToken: string
 ): void {
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.cookie("accessToken", accessToken, {
-    maxAge: accessTokenMaxAge, 
+    maxAge: accessTokenMaxAge,
     httpOnly: true,
     path: "/",
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
 
   res.cookie("refreshToken", refreshToken, {
-    maxAge: refreshTokenMaxAge, 
+    maxAge: refreshTokenMaxAge,
     httpOnly: true,
     path: "/",
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
   });
 }
 export default setAuthCookies;
