@@ -29,12 +29,15 @@ const useFetchAll = () => {
       }
       if (sortBy === "Date") {
         return order === "ASC"
-          ? new Date(a.date).getTime() - new Date(b.date).getTime()
-          : new Date(b.date).getTime() - new Date(a.date).getTime();
+          ? new Date(a.date ?? new Date(0)).getTime() -
+              new Date(b.date ?? new Date(0)).getTime()
+          : new Date(b.date ?? new Date(0)).getTime() -
+              new Date(a.date ?? new Date(0)).getTime();
       }
+
       return 0;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todoData, sortBy, order]);
 
   console.log(todos, "sorted todos on fetched");
