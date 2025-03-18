@@ -1,5 +1,5 @@
 import { SignUpType } from "../schema/auth.schema";
-import apiClient from "../utils/apiClient";
+import apiClient from "./apiClient";
 
 const signUp = async (data: SignUpType) => {
   const response = await apiClient.post("/auth/register", {

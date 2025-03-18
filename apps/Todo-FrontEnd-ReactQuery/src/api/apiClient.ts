@@ -1,10 +1,9 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 const apiClient = axios.create({
-  baseURL: "https://todo-backend-mongo.onrender.com/api",
+  baseURL: `${apiUrl}/api`,
   withCredentials: true,
-  
 });
 
 // Global request interceptor to check internet connectivity

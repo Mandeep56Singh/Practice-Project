@@ -1,6 +1,6 @@
 import { TodoDataType } from "../schema/todo.schema";
 import { TodoType } from "../types/todo.type";
-import apiClient from "../utils/apiClient";
+import apiClient from "./apiClient";
 
 type EditTodoProps = TodoDataType & {
   id: string;

@@ -1,7 +1,7 @@
-import apiClient from "../utils/apiClient";
+import apiClient from "./apiClient";
 
 const toggleCompletion = async (id: string) => {
-  console.log("toggle completion trigger")
+  console.log("toggle completion trigger");
   const { data } = await apiClient.patch(`/todo/toggleCompleteTodo/${id}`);
   return data;
 };

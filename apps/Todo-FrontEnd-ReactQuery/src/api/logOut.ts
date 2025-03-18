@@ -1,4 +1,4 @@
-import apiClient from "../utils/apiClient";
+import apiClient from "./apiClient";
 
 const logOut = async () => {
   const response = await apiClient.post("/auth/logOut");
