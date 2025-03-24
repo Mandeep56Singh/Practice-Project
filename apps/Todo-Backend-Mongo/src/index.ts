@@ -1,22 +1,22 @@
 import cookieParser from "cookie-parser";
-import cors from "cors";
+import cors from "cors"; 
 import "dotenv/config";
 import express, { Request, Response } from "express";
 import "express-async-errors";
-import agenda from "./jobs/agenda.js";
-import deserializeUser from "./middleware/deserailzeUser.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import httpLogger from "./middleware/httpLogger.js";
-import requireAuth from "./middleware/requireAuth.js";
 import { routeNotFound } from "./middleware/routeNotFound.js";
 import authRouter from "./routes/auth.routes.js";
 import healthRouter from "./routes/health.routes.js";
 import todoRouter from "./routes/todo.routes.js";
 import logger from "./utils/logger.js";
+import deserializeUser from "./middleware/deserailzeUser.js";
+import requireAuth from "./middleware/requireAuth.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
+import agenda from "./jobs/agenda.js";
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",");
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",")
 
 // Middlewares
 app.use(
@@ -38,14 +38,16 @@ app.use(express.json());
 app.use(httpLogger);
 app.use(cookieParser());
 
+
 app.get("/", (_: Request, res: Response) => {
   res.status(200).send("Server is running");
 });
 
 // Routes
 app.use("/health", healthRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/todo", deserializeUser, requireAuth, todoRouter);
+app.use("/api/auth",  authRouter);
+app.use("/api/todo", deserializeUser, requireAuth ,todoRouter);
+
 
 // Error handling
 app.use(routeNotFound);
