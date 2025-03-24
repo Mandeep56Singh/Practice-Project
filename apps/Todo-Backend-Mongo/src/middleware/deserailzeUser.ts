@@ -26,7 +26,7 @@ const deserializeUser = async (
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
       await userService.refreshTokens(refreshToken);
 
-    setAuthCookies(req ,res, newAccessToken, newRefreshToken);
+    setAuthCookies(res, newAccessToken, newRefreshToken);
 
     const decoded = verifyJwt(newAccessToken);
 

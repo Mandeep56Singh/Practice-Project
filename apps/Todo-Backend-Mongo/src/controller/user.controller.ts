@@ -31,7 +31,7 @@ export class UserController {
     const { accessToken, refreshToken } =
       await this.userService.loginUser(data);
 
-    setAuthCookies(req, res, accessToken, refreshToken);
+    setAuthCookies(res, accessToken, refreshToken);
 
     res.status(200).json({ message: "Token generated successfully" });
   };
@@ -44,7 +44,7 @@ export class UserController {
     }
     await this.userService.logoutUser(refreshToken);
 
-    clearAuthCookies(req, res);
+    clearAuthCookies(res);
     res.status(200).json({ message: "Logged out successfully" });
   };
 }
