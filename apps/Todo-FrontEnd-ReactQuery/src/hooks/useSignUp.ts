@@ -20,7 +20,7 @@ const useSignUp = () => {
     onError: (err: unknown) => {
       toast.dismiss();
       if (isAxiosError(err)) {
-        toast.error(err.response?.data.message || "Login Failed");
+        toast.error(err.response?.data.message || "SignUp Failed");
       } else {
         toast.error("An unexpected error occured");
       }
