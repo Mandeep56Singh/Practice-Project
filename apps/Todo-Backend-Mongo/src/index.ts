@@ -54,10 +54,10 @@ app.use(routeNotFound);
 app.use(errorHandler);
 
 // Start server
-const host =
-  process.env.NODE_ENV === "production"
-    ? process.env.RENDER_EXTERNAL_HOSTNAME ||
-      "https://todo-backend-mongo.onrender.com"
+const host = process.env.RAILWAY_PUBLIC_DOMAIN
+  ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+  : process.env.RENDER_EXTERNAL_HOSTNAME
+    ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}`
     : `localhost:${PORT}`;
 
 const server = app.listen(PORT, () => {
